@@ -5,19 +5,22 @@
 - We configure the [vagrant](https://github.com/msanoli2503-wq/Dynamic-DNS-DDNS-/blob/main/Vagrantfile) for three machines.
     
     1. DNS SERVER
-    2.THE DHCP SERVER
-    3.AND TEH CLIENT
+    2. THE DHCP SERVER
+    3. AND THE CLIENT
     
     ---
 
-### 2.PROVISIO-DNS
+### 2.[PROVISION-DNS](https://github.com/msanoli2503-wq/Dynamic-DNS-DDNS-/blob/main/provision-dns.sh)
 
 This script's job is to build the entire DNS server from scratch.
 
-* **Installs BIND9:** It first installs the **bind9** software, which is the program that **actualy** runs the DNS service.
-* **Writes the Secret Key:** It creates the **named.conf.options** file and writes the **key "ddns-key"** block. This is like creating a secret password (our secret key) and giving it a name. This tells the server, "Only trust **ppl** who know this password."
-* **Defines the Zone:** It creates **named.conf.local**to tell BIND,that it in controll of the domain .
-* **Sets the Update Rule:** This is the most **importent** part of that file. We add **allow-update { key "ddns-key"; }**. This is the *rule* that says, "You are allowed to make changes to this domain, but *only* if the request comes with the 'ddns-key' password you know."
+1. **Installs BIND9:** It first installs the **bind9** software, which is the program that **actualy** runs the DNS service.
+2. **Writes the Secret Key:** It creates the **named.conf.options** file and writes the **key "ddns-key"** block. This is like creating a secret password (our secret key) and giving it a name. This tells the server, "Only trust **ppl** who know this password.
+
+3. **Defines the Zone:** It creates **named.conf.local**to tell BIND,that it in controll of the domain .
+
+4. **Sets the Update Rule:** This is the most **importent** part of that file. We add **allow-update { key "ddns-key"; }**. This is the *rule* that says, "You are allowed to make changes to this domain, but *only* if the request comes with the 'ddns-key' password you know."
+
 * **THE CRITICAL STEP (Permissions):** 
 
     1. We run **chown bind:bind** and **chmod 664** on the zone files (like **db.manu.test**).
@@ -26,10 +29,11 @@ This script's job is to build the entire DNS server from scratch.
 
 ---
 
-## 3. [PROVISION-DHCP]()
+## 3. [PROVISION-DHCP](https://github.com/msanoli2503-wq/Dynamic-DNS-DDNS-/blob/main/provision-dhcp.sh)
 
 
 1. **Writes its Copy of the Key:** It creates the **/etc/dhcp/ddns.key** file. This file *only* contains the **identcal** secret key. This is how the DHCP server "learns" the password.
+
 2. **Writes the Main Config:** It creates the **dhcpd.conf** file. The key parts are:
     * **include "/etc/dhcp/ddns.key";**: This tells the DHCP server, to learn the se
     * **option domain-name "manu.test";**: Its tell this the domain anem.
@@ -37,7 +41,7 @@ This script's job is to build the entire DNS server from scratch.
 
 ---
 
-## 4.PROVISION-CLIENT
+## 4.[PROVISION-CLIENT](https://github.com/msanoli2503-wq/Dynamic-DNS-DDNS-/blob/main/provision-client.sh)
 
 This script is the simplest. **Its** only job is to start the whole process.
 
